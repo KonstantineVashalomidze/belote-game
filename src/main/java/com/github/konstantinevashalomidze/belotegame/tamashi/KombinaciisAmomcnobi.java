@@ -14,16 +14,22 @@ public class KombinaciisAmomcnobi {
     }
 
     public List<Kombinacia> ipoveKombinaciebi(Motamashe motamashe) {
-        List<Kombinacia> kombinaciebi = new ArrayList<>();
         Xeli xeli = motamashe.xeli();
 
-        kombinaciebi.addAll(ipoveMiyolebebi(motamashe, xeli));
-        kombinaciebi.addAll(ipoveOtxiErtnairi(motamashe, xeli));
+        List<Kombinacia> otxiErtnairebi = ipoveOtxiErtnairebi(motamashe, xeli);
+        List<Kombinacia> kombinaciebi = new ArrayList<>(otxiErtnairebi);
+
+        Set<Karti> gamoyenebuliRankebi = xeli.kartebi().stream()
+                        .filter(k -> otxiErtnairebi.stream()
+                                .anyMatch(ko -> ko.yvelazeDidiRanki() == k.ranki()))
+                                .collect(Collectors.toSet());
+
+        kombinaciebi.addAll(ipoveMiyolebebi(motamashe, xeli, gamoyenebuliRankebi));
 
         return kombinaciebi;
     }
 
-    private Collection<Kombinacia> ipoveOtxiErtnairi(Motamashe motamashe, Xeli xeli) {
+    private List<Kombinacia> ipoveOtxiErtnairebi(Motamashe motamashe, Xeli xeli) {
         Map<Ranki, Long> rankisMixedvitDatvla = xeli.kartebi().stream()
                 .collect(Collectors.groupingBy(Karti::ranki, Collectors.counting()));
 
@@ -60,10 +66,11 @@ public class KombinaciisAmomcnobi {
         };
     }
 
-    private Collection<Kombinacia> ipoveMiyolebebi(Motamashe motamashe, Xeli xeli) {
+    private List<Kombinacia> ipoveMiyolebebi(Motamashe motamashe, Xeli xeli, Set<Karti> gamoyenebuliRankebi) {
         List<Kombinacia> miyolebebi = new ArrayList<>();
         // kartebis dajgufeba cvetis mixedvit
         Map<Cveti, List<Ranki>> cvetisMixedvit = xeli.kartebi().stream()
+                .filter(k -> !gamoyenebuliRankebi.contains(k))
                 .collect(Collectors.groupingBy(
                         Karti::cveti,
                         Collectors.mapping(Karti::ranki, Collectors.toList())
@@ -96,7 +103,8 @@ public class KombinaciisAmomcnobi {
                 while (i + sigrdze < dasortiliRankebi.size()
                 && !gamoyenebuli[i + sigrdze]
                 && dasortiliRankebi.get(i + sigrdze).nomeri() == 
-                dasortiliRankebi.get(i).nomeri() + sigrdze) {
+                dasortiliRankebi.get(i).nomeri() + sigrdze
+                && sigrdze < 5) {
                     sigrdze++;
                 }
             
@@ -110,7 +118,7 @@ public class KombinaciisAmomcnobi {
                 break;
             }
 
-            Ranki yvelazeMaghali = dasortiliRankebi.get(sauketesosSawyisi + sauketesosSawyisi - 1);
+            Ranki yvelazeMaghali = dasortiliRankebi.get(sauketesosSawyisi + sauketesosSigrdze - 1);
             int qula = switch (sauketesosSigrdze) {
                 case 3 -> 20;
                 case 4 -> 50;

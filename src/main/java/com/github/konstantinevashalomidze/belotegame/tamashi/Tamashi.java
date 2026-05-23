@@ -16,10 +16,13 @@ public class Tamashi {
 
     private int gayinuliQula;
 
-    public Tamashi(Motamashe m0, Motamashe m1, Motamashe m2, Motamashe m3) {
+    private final DastisMomwodebeli dastisMomwodebeli;
+
+    public Tamashi(Motamashe m0, Motamashe m1, Motamashe m2, Motamashe m3, DastisMomwodebeli dastisMomwodebeli) {
         motamasheebi = List.of(m0, m1, m2, m3);
         gundiA = new Gundi(m0, m2);
         gundiB = new Gundi(m1, m3);
+        this.dastisMomwodebeli = dastisMomwodebeli;
     }
 
 
@@ -27,7 +30,7 @@ public class Tamashi {
         if (tamashiDasrulebulia()) {
             throw new IllegalStateException("დამთავრდა თამაში");
         }
-        mimdinareRaundi = new Raundi(motamasheebi, gundiA, gundiB, kartisDamrigebelisPozicia);
+        mimdinareRaundi = new Raundi(motamasheebi, gundiA, gundiB, kartisDamrigebelisPozicia, dastisMomwodebeli);
         mimdinareRaundi.daarigeKarti();
     }
 

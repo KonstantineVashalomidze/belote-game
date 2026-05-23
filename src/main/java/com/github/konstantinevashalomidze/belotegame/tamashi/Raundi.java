@@ -30,16 +30,19 @@ public class Raundi {
 
     private BelotisMayurebeli belotisMayurebeli;
 
-    public Raundi(List<Motamashe> motamasheebi, Gundi mokozireGundi, Gundi mowinaaghmdegeGundi, int kartisDamrigeblisPozicia) {
+    private DastisMomwodebeli dastisMomwodebeli;
+
+    public Raundi(List<Motamashe> motamasheebi, Gundi mokozireGundi, Gundi mowinaaghmdegeGundi, int kartisDamrigeblisPozicia, DastisMomwodebeli dastisMomwodebeli) {
         this.motamasheebi = motamasheebi;
         this.mokozireGundi = mokozireGundi;
         this.mowinaaghmdegeGundi = mowinaaghmdegeGundi;
         this.kartisDamrigeblisPozicia = kartisDamrigeblisPozicia;
+        this.dastisMomwodebeli = dastisMomwodebeli;
     }
 
 
     public void daarigeKarti() {
-        kartisDamrigebeli = new KartisDamrigebeli(motamasheebi, kartisDamrigeblisPozicia);
+        kartisDamrigebeli = new KartisDamrigebeli(motamasheebi, kartisDamrigeblisPozicia, dastisMomwodebeli.sheqmeniDasta());
         KartisDarigebisShedegi kartisDarigebisShedegi = kartisDamrigebeli.pirveladDaarige();
         darcheniliDasta = kartisDarigebisShedegi.darcheniliDasta();
 

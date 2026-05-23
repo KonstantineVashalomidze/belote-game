@@ -39,7 +39,7 @@ public class KombinaciisShemdarebeli {
     }
 
     private boolean ertnairebiMetiaMimdevrobaze(Kombinacia ertnairi, Kombinacia miyoleba) {
-        if (ertnairi.sigrdze() >= 5 && miyoleba.cveti() == koziriCveti) {
+        if (miyoleba.sigrdze() >= 5 && miyoleba.cveti() == koziriCveti) {
             return false;
         }
         return saatisIsrisMimartulebitPirveliMotamashea(ertnairi.motamashe(), miyoleba.motamashe());
@@ -48,14 +48,14 @@ public class KombinaciisShemdarebeli {
     private boolean mimdevrobaMetiaMimdevrobaze(Kombinacia a, Kombinacia b) {
         if (a.sigrdze() != b.sigrdze()) return a.sigrdze() > b.sigrdze();
 
-        boolean aKoziria = a.cveti() == koziriCveti;
-        boolean bKoziria = b.cveti() == koziriCveti;
-
-        if (aKoziria != bKoziria) return aKoziria;
-
-        if (a.yvelazeDidiRanki() != b.yvelazeDidiRanki()) {
+        if (a.yvelazeDidiRanki().nomeri() != b.yvelazeDidiRanki().nomeri()) {
             return a.yvelazeDidiRanki().nomeri() > b.yvelazeDidiRanki().nomeri();
         }
+
+        boolean aKoziria = a.cveti() == koziriCveti;
+        boolean bKoziria = b.cveti() == koziriCveti;
+        if (aKoziria != bKoziria) return aKoziria;
+
 
         return saatisIsrisMimartulebitPirveliMotamashea(a.motamashe(), b.motamashe());
     }

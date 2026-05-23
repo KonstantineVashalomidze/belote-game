@@ -5,14 +5,15 @@ import java.util.List;
 public class KartisDamrigebeli {
     private final List<Motamashe> motamasheebi; // saatis isris mimart. indexi 0-3
     private final int kartisDamrigebelisPozicia; // romelia dileri am raundshi
+    private final Dasta dasta;
 
-    public KartisDamrigebeli(List<Motamashe> motamasheebi, int kartisDamrigebelisPozicia) {
+    public KartisDamrigebeli(List<Motamashe> motamasheebi, int kartisDamrigebelisPozicia, Dasta dasta) {
         this.motamasheebi = motamasheebi;
         this.kartisDamrigebelisPozicia = kartisDamrigebelisPozicia;
+        this.dasta = dasta;
     }
 
     public KartisDarigebisShedegi pirveladDaarige() {
-        Dasta dasta = new Dasta();
         dasta.achexe();
 
         for (int step = 1; step <= 4; step++) {
