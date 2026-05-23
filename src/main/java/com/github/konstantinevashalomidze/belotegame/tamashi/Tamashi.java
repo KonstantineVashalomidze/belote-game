@@ -109,7 +109,9 @@ public class Tamashi {
         return kartisDamrigebelisPozicia;
     }
 
-
+    public List<Motamashe> motamasheebi() {
+        return motamasheebi;
+    }
 
 
 }
