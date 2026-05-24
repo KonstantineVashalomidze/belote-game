@@ -38,6 +38,9 @@ public class TamashisSesia {
         return statusi;
     }
 
+    public void statusi(TamashisSesiisStatusi statusi) {
+        this.statusi = statusi;
+    }
 
 
     public Map<String, Integer> zedmetsaxeliDaMotamashisPozicia() {

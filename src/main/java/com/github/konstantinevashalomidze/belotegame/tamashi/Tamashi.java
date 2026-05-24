@@ -113,5 +113,7 @@ public class Tamashi {
         return motamasheebi;
     }
 
-
+    public int gayinuliQula() {
+        return gayinuliQula;
+    }
 }

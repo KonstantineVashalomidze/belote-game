@@ -179,5 +179,7 @@ public class Raundi {
         return mokozireGundi;
     }
 
-
+    public Cveti koziriCveti() {
+        return koziriCveti;
+    }
 }

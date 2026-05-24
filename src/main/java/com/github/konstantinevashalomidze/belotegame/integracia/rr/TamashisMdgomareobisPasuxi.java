@@ -2,7 +2,7 @@ package com.github.konstantinevashalomidze.belotegame.integracia.rr;
 
 import java.util.List;
 
-public record TamashisMdgomareobaPasuxi(
+public record TamashisMdgomareobisPasuxi(
         String otaxisId,
         String faza,
         String mimdinareMotamashisZedmetsaxeli,

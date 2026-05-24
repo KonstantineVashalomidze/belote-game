@@ -51,7 +51,7 @@ public class TamashisKontroleri {
     ) {
         try {
             TamashisSesia sesia = mexsiereba.sesia(otaxisId);
-            TamashisMdgomareobaPasuxi mdgomareoba = gadamaketebeli.gadaaketePasxuad(sesia, zedmetsaxeli);
+            TamashisMdgomareobisPasuxi mdgomareoba = gadamaketebeli.gadaaketePasxuad(sesia, zedmetsaxeli);
             return ResponseEntity.ok(mdgomareoba);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
