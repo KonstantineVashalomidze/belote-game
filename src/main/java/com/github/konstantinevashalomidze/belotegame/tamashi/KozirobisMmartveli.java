@@ -27,11 +27,12 @@ public class KozirobisMmartveli {
     public void motamashemTqvaPasi(Motamashe motamashe) {
         davushvitRomSityvisTqmisUflebaaqvs(motamashe);
 
-        kozirobisMdgomareoba.sityvaShemdegMotamashezeGadavida();
 
         if (kozirobisMdgomareoba.kozirobisFaza() == KozirobisFaza.PIRVELI_KRUGI
                 && kozirobisMdgomareoba.sityvaVinujdenzea()) {
             kozirobisMdgomareoba.shemdegiKrugiDaiwyo();
+        } else {
+            kozirobisMdgomareoba.sityvaShemdegMotamashezeGadavida();
         }
     }
 

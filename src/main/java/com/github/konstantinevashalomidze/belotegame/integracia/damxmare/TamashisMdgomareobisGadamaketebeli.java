@@ -26,7 +26,11 @@ public class TamashisMdgomareobisGadamaketebeli {
         Map<Integer, String> motamashisPoziciaDaZedmetsaxeli = sheatrialeMapi(zedmetsaxeliDaMotamashisPozicia);
 
 
-        String mimdinareMotamashisZedmetsaxeli = motamashisPoziciaDaZedmetsaxeli.get(raundi.mimdinareMotamashisPozicia());
+        int mimdinaresPozicia = raundi.raundisFaza() == KOZIROBA
+                ? raundi.kozirobisMdgomareoba().mimdinareMotamashisPozicia()
+                : raundi.mimdinareMotamashisPozicia();
+
+        String mimdinareMotamashisZedmetsaxeli = motamashisPoziciaDaZedmetsaxeli.get(mimdinaresPozicia);
 
         Integer momtxovnisPozica = zedmetsaxeliDaMotamashisPozicia.get(zedmetsaxeli);
         if (momtxovnisPozica == null) {
@@ -101,7 +105,9 @@ public class TamashisMdgomareobisGadamaketebeli {
             amotrialebuliKarti,
             qulebi,
             gamarjvebuliGundi, datvliliKombinaciebi, kombinaciisGamarjvebuliGundi,
-null
+null,
+            raundi.kozirobisMdgomareoba().kozirobisFaza().name(),
+            raundi.kozirobisMdgomareoba().sityvaVinujdenzea()
         );
 
     }
@@ -129,7 +135,9 @@ null
                 null,
                 null,
                 null,
-                motamasheebi
+                motamasheebi,
+                null,
+                null
         );
     }
 
