@@ -16,6 +16,6 @@ public record TamashisMdgomareobisPasuxi(
         String romeliGundisKombinaciebiGadis,
         List<MotamashePasuxi> motamasheebi,
         String kozirobisFaza,
-        Boolean sityvaVinujdenzea
-) {
+        Boolean sityvaVinujdenzea,
+        MotamashePasuxi mokozire) {
 }

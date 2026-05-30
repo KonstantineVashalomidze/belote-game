@@ -1,7 +1,6 @@
 package com.github.konstantinevashalomidze.belotegame.integracia.damxmare;
 
 import com.github.konstantinevashalomidze.belotegame.integracia.TamashisSesia;
-import com.github.konstantinevashalomidze.belotegame.integracia.TamashisSesiisStatusi;
 import com.github.konstantinevashalomidze.belotegame.integracia.rr.*;
 import com.github.konstantinevashalomidze.belotegame.tamashi.*;
 import org.springframework.stereotype.Component;
@@ -9,6 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.github.konstantinevashalomidze.belotegame.integracia.TamashisSesiisStatusi.DASRULEBULI;
 import static com.github.konstantinevashalomidze.belotegame.integracia.TamashisSesiisStatusi.LODINI;
@@ -96,8 +96,15 @@ public class TamashisMdgomareobisGadamaketebeli {
         }
 
         List<MotamashePasuxi> motamasheebi = sesia.zedmetsaxeliDaRomelGundshia().entrySet().stream()
-                .map(e -> new MotamashePasuxi(e.getKey(), e.getValue()))
+                .map(e -> new MotamashePasuxi(e.getKey(), e.getValue(), sesia.zedmetsaxeliDaMotamashisPozicia().get(e.getKey())))
                 .toList();
+
+
+        Motamashe mokozire = raundi.kozirobisMdgomareoba().mokozire();
+        MotamashePasuxi mokozirePasuxi = null;
+        if (mokozire != null) {
+             mokozirePasuxi = mokozirePasuxi(mokozire, sesia);
+        }
 
         return new TamashisMdgomareobisPasuxi(
             sesia.otaxisId(),
@@ -111,9 +118,24 @@ public class TamashisMdgomareobisGadamaketebeli {
             gamarjvebuliGundi, datvliliKombinaciebi, kombinaciisGamarjvebuliGundi,
             motamasheebi,
             raundi.kozirobisMdgomareoba().kozirobisFaza().name(),
-            raundi.kozirobisMdgomareoba().sityvaVinujdenzea()
+            raundi.kozirobisMdgomareoba().sityvaVinujdenzea(),
+            mokozirePasuxi
         );
 
+    }
+
+    private MotamashePasuxi mokozirePasuxi(Motamashe mokozire, TamashisSesia sesia) {
+        int mokozirisPozicia = mokozire.pozicia();
+        Map<String, Integer> zedmetsaxeliDaMotamashisPozicia = sesia.zedmetsaxeliDaMotamashisPozicia();
+        Map<String, String> zedmetsaxeliDaRomelGundshia = sesia.zedmetsaxeliDaRomelGundshia();
+
+        String mokozirisZedmetsaxeli = zedmetsaxeliDaMotamashisPozicia.entrySet().stream()
+                .filter(entry -> Objects.equals(entry.getValue(), mokozirisPozicia))
+                .map(Map.Entry::getKey)
+                .findFirst().orElse(null);
+        String mokoziresGundi = zedmetsaxeliDaRomelGundshia.get(mokozirisZedmetsaxeli);
+
+        return new MotamashePasuxi(mokozirisZedmetsaxeli, mokoziresGundi, sesia.zedmetsaxeliDaMotamashisPozicia().get(mokozirisZedmetsaxeli));
     }
 
     private Map<Integer, String> sheatrialeMapi(Map<String, Integer> zedmetsaxeliDaMotamashisPozicia) {
@@ -124,7 +146,7 @@ public class TamashisMdgomareobisGadamaketebeli {
 
     private TamashisMdgomareobisPasuxi lodinisPasuxi(TamashisSesia sesia) {
         List<MotamashePasuxi> motamasheebi = sesia.zedmetsaxeliDaRomelGundshia().entrySet().stream()
-                .map(e -> new MotamashePasuxi(e.getKey(), e.getValue()))
+                .map(e -> new MotamashePasuxi(e.getKey(), e.getValue(), sesia.zedmetsaxeliDaMotamashisPozicia().get(e.getKey())))
                 .toList();
 
         return new TamashisMdgomareobisPasuxi(
@@ -141,8 +163,8 @@ public class TamashisMdgomareobisGadamaketebeli {
                 null,
                 motamasheebi,
                 null,
-                null
-        );
+                null,
+                null);
     }
 
 }
