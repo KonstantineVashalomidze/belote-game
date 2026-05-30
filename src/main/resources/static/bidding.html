@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bidding — Belote</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/bidding.js"></script>
+</head>
+<body>
+  <div class="card" style="max-width: 520px; width: 100%;">
+    <div id="trumpBar" style="text-align: center; margin-bottom: 0.5rem; font-size: 0.9rem; color: #555;"></div>
+
+    <div class="arena">
+      <div></div>
+      <div id="pTop" class="player-slot"></div>
+      <div></div>
+
+      <div id="pLeft" class="player-slot"></div>
+      <div id="centerCard" style="grid-area: center;"></div>
+      <div id="pRight" class="player-slot"></div>
+
+      <div></div>
+      <div id="pBottom" class="player-slot"></div>
+      <div></div>
+    </div>
+
+    <div id="actions" style="text-align: center; margin-top: 1rem;"></div>
+    <div id="error" class="error" style="text-align: center;"></div>
+  </div>
+</body>
+</html>

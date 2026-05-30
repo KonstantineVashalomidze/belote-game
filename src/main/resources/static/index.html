@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Belote Game</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/entry.js"></script>
+</head>
+<body>
+  <div class="card" style="max-width: 400px;">
+    <h1 style="text-align: center; margin-bottom: 2rem;">Belote</h1>
+
+    <input id="nickname" type="text" placeholder="Your nickname">
+
+    <div id="teamSelector" style="display: flex; gap: 1rem; margin: 2rem 0;">
+      <button id="teamA" style="flex: 1; background: #1976d2; color: white;">Team A</button>
+      <button id="teamB" style="flex: 1; background: #388e3c; color: white;">Team B</button>
+    </div>
+
+    <button id="play" style="width: 100%; background: #f57c00; color: white; padding: 1rem; font-weight: bold;">Play</button>
+
+    <div id="error" class="error"></div>
+  </div>
+</body>
+</html>
