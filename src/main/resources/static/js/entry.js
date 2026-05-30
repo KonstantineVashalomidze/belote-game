@@ -2,30 +2,34 @@ import { createGame, joinGame } from './api.js';
 import { saveSession } from './storage.js';
 
 const nicknameInput = document.getElementById('nickname');
-const teamABtn = document.getElementById('teamA');
-const teamBBtn = document.getElementById('teamB');
-const playBtn = document.getElementById('play');
-const errorDiv = document.getElementById('error');
+const teamABtn      = document.getElementById('teamA');
+const teamBBtn      = document.getElementById('teamB');
+const playBtn       = document.getElementById('play');
+const errorDiv      = document.getElementById('error');
+const subtitleEl    = document.getElementById('subtitle');
+const teamSelector  = document.getElementById('teamSelector');
 
 const params = new URLSearchParams(window.location.search);
 const roomId = params.get('room');
 let selectedTeam = null;
 
-const teamSelector = document.getElementById('teamSelector');
 if (!roomId) {
   teamSelector.style.display = 'none';
+} else {
+  subtitleEl.textContent = `Joining room ${roomId.slice(0, 8)}…`;
+  playBtn.textContent = 'Join Game';
 }
 
 teamABtn.addEventListener('click', () => {
   selectedTeam = 'A';
-  teamABtn.style.opacity = '1';
-  teamBBtn.style.opacity = '0.5';
+  teamABtn.classList.add('selected');
+  teamBBtn.classList.remove('selected');
 });
 
 teamBBtn.addEventListener('click', () => {
   selectedTeam = 'B';
-  teamBBtn.style.opacity = '1';
-  teamABtn.style.opacity = '0.5';
+  teamBBtn.classList.add('selected');
+  teamABtn.classList.remove('selected');
 });
 
 playBtn.addEventListener('click', async () => {

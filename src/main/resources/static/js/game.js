@@ -14,6 +14,7 @@ const pLeft           = document.getElementById('pLeft');
 const pRight          = document.getElementById('pRight');
 const pBottom         = document.getElementById('pBottom');
 const trickArea       = document.getElementById('trickArea');
+const tableInfo       = document.getElementById('tableInfo');
 const actionsDiv      = document.getElementById('actions');
 const handDiv         = document.getElementById('hand');
 const errorDiv        = document.getElementById('error');
@@ -22,6 +23,7 @@ const comboHandDiv    = document.getElementById('comboHand');
 const comboButtons    = document.getElementById('comboButtons');
 const comboListDiv    = document.getElementById('comboList');
 const readyBtn        = document.getElementById('readyBtn');
+const comboHeader     = document.getElementById('comboHeader');
 const comboError      = document.getElementById('comboError');
 const roundEndOverlay = document.getElementById('roundEndOverlay');
 const roundEndContent = document.getElementById('roundEndContent');
@@ -40,22 +42,29 @@ let pendingCombos = []; // [{ combo, indices: Set }]
 
 // belote state
 let pendingBeloteCard = null;
+let beloteDeclared = false; // true once player has said "Belote" this round
 
 // round-end display
 let prevFaza = null;
 let roundEndUntil = 0;
+let prevScores = { a: 0, b: 0 };
+
+// last trick display
+let prevTrickCards = [];
+let lastTrick = null; // { cards, winner }
+let trickWonUntil = 0;
+
+// trick counter
+let tricksCompleted = 0;
 
 // ─── SHARED HELPERS ─────────────────────────────────────────────────────────
 
 function renderTopBar(state) {
-  scoreA.textContent = `A: ${state.qula.gundiAQula}`;
-  scoreB.textContent = `B: ${state.qula.gundiBQula}`;
+  const myTeam = state.motamasheebi?.find(p => p.zedmetsaxeli === nickname)?.gundi;
+  scoreA.textContent = `A: ${state.qula.gundiAQula}${myTeam === 'A' ? ' (you)' : ''}`;
+  scoreB.textContent = `B: ${state.qula.gundiBQula}${myTeam === 'B' ? ' (you)' : ''}`;
   let html = '';
-  if (state.koziriCveti) {
-    html = `<span style="color:${SUIT_COLORS[state.koziriCveti]}">${SUIT_SYMBOLS[state.koziriCveti]}</span>`;
-    if (state.mokozire) html += ` ${state.mokozire.zedmetsaxeli} (${state.mokozire.gundi})`;
-  }
-  if (state.qula.gayinuliQula > 0) html += ` · Frozen: ${state.qula.gayinuliQula}`;
+  if (state.qula.gayinuliQula > 0) html = `Frozen: ${state.qula.gayinuliQula}`;
   trumpInfo.innerHTML = html;
 }
 
@@ -66,9 +75,16 @@ function renderPlayers(state) {
     const diff = (p.pozicia - me.pozicia + 4) % 4;
     const el = SLOTS[diff];
     if (!el) continue;
-    el.textContent = p.zedmetsaxeli;
-    const isActive = p.zedmetsaxeli === state.mimdinareMotamashisZedmetsaxeli;
+    const isActive   = p.zedmetsaxeli === state.mimdinareMotamashisZedmetsaxeli;
+    const isMe       = p.zedmetsaxeli === nickname;
+    const isMokozire = state.mokozire?.zedmetsaxeli === p.zedmetsaxeli && state.koziriCveti;
     el.className = `player-slot team-${p.gundi.toLowerCase()}${isActive ? ' active' : ''}`;
+    const initial   = p.zedmetsaxeli.charAt(0).toUpperCase();
+    const youBadge  = isMe ? `<span class="badge-you">you</span>` : '';
+    const trumpBadge = isMokozire
+      ? `<span class="badge-trump" style="color:${SUIT_COLORS[state.koziriCveti]};">${SUIT_SYMBOLS[state.koziriCveti]}</span>`
+      : '';
+    el.innerHTML = `<span class="avatar">${initial}</span>${youBadge}${p.zedmetsaxeli}${trumpBadge}`;
   }
 }
 
@@ -80,11 +96,27 @@ function hideAllOverlays() {
 
 // ─── KARTIS_DARIGEBA ────────────────────────────────────────────────────────
 
+function renderTableInfo(state) {
+  if (!state.koziriCveti) { tableInfo.style.display = 'none'; return; }
+  tableInfo.style.display = 'flex';
+  const sym = SUIT_SYMBOLS[state.koziriCveti];
+  const col = SUIT_COLORS[state.koziriCveti];
+  const trickLine = state.faza === 'KRUGEBI'
+    ? `<div style="opacity:0.85;">Trick ${Math.min(tricksCompleted + 1, 8)} / 8</div>`
+    : '';
+  const mokoziresLine = state.mokozire
+    ? `<div style="opacity:0.65;">${state.mokozire.zedmetsaxeli} called trump</div>`
+    : '';
+  tableInfo.innerHTML = `<div style="font-size:1.4rem; line-height:1; color:${col};">${sym}</div>${trickLine}${mokoziresLine}`;
+}
+
 function renderDealing() {
   hideAllOverlays();
   trickArea.innerHTML = '';
   handDiv.innerHTML = '';
   actionsDiv.textContent = 'Dealing cards...';
+  beloteDeclared = false;
+  tricksCompleted = 0;
 }
 
 // ─── KOMBINACIIS_DEKLARACIA ─────────────────────────────────────────────────
@@ -94,6 +126,12 @@ function renderComboPhase(state) {
   comboOverlay.style.display = 'flex';
   if (comboReady) return;
   comboReady = true;
+
+  if (state.koziriCveti) {
+    const sym = SUIT_SYMBOLS[state.koziriCveti];
+    const col = SUIT_COLORS[state.koziriCveti];
+    comboHeader.innerHTML = `Declare Combos &nbsp;<span style="color:${col}">${sym}</span>`;
+  }
 
   selectedIdx.clear();
   lockedIdx.clear();
@@ -209,22 +247,43 @@ function renderComboList(cards, trumpSuit) {
 
 // ─── KRUGEBI ────────────────────────────────────────────────────────────────
 
+function renderTrickCards(cards) {
+  cards.forEach(played => {
+    const div = document.createElement('div');
+    div.style.textAlign = 'center';
+    div.appendChild(cardEl(played.cveti, played.ranki));
+    const name = document.createElement('div');
+    name.textContent = played.zedmetsaxeli;
+    name.style.cssText = 'font-size:0.7rem; color:rgba(255,255,255,0.7); margin-top:0.15rem;';
+    div.appendChild(name);
+    trickArea.appendChild(div);
+  });
+}
+
 function renderKrugebi(state) {
   hideAllOverlays();
   comboReady = false;
 
+  const currTrick = state.mimdinareKrugi || [];
+
+  // Detect trick completion: trick cards dropped away
+  if (prevTrickCards.length > 0 && currTrick.length < prevTrickCards.length) {
+    lastTrick = { cards: prevTrickCards, winner: state.mimdinareMotamashisZedmetsaxeli };
+    trickWonUntil = Date.now() + 2000;
+    tricksCompleted = Math.min(tricksCompleted + 1, 8);
+  }
+  prevTrickCards = currTrick;
+
   trickArea.innerHTML = '';
-  if (state.mimdinareKrugi) {
-    state.mimdinareKrugi.forEach(played => {
-      const div = document.createElement('div');
-      div.style.textAlign = 'center';
-      div.appendChild(cardEl(played.cveti, played.ranki));
-      const name = document.createElement('div');
-      name.textContent = played.zedmetsaxeli;
-      name.style.cssText = 'font-size:0.7rem; color:rgba(255,255,255,0.7); margin-top:0.15rem;';
-      div.appendChild(name);
-      trickArea.appendChild(div);
-    });
+
+  if (Date.now() < trickWonUntil && lastTrick) {
+    const label = document.createElement('div');
+    label.textContent = `${lastTrick.winner} took the trick`;
+    label.style.cssText = 'width:100%; text-align:center; color:#a5d6a7; font-size:0.8rem; font-weight:bold; margin-bottom:0.3rem;';
+    trickArea.appendChild(label);
+    renderTrickCards(lastTrick.cards);
+  } else {
+    renderTrickCards(currTrick);
   }
 
   if (pendingBeloteCard) {
@@ -235,11 +294,26 @@ function renderKrugebi(state) {
 
   const isMyTurn = state.mimdinareMotamashisZedmetsaxeli === nickname && !pendingBeloteCard;
   handDiv.innerHTML = '';
-  state.sheniKartebi.forEach(card => {
+  const N = state.sheniKartebi.length;
+  const spread = Math.min(3.5 * (N - 1), 24);
+  const degPerCard = N > 1 ? spread / (N - 1) : 0;
+  state.sheniKartebi.forEach((card, i) => {
     const el = cardEl(card.cveti, card.ranki);
-    el.style.margin = '0.2rem';
+    const angle = (i - (N - 1) / 2) * degPerCard;
+    el.style.transform = `rotate(${angle}deg)`;
+    el.style.zIndex = i;
     if (isMyTurn) {
       el.classList.add('playable');
+      el.addEventListener('mouseenter', () => {
+        el.style.transform = 'translateY(-12px)';
+        el.style.zIndex = '20';
+        el.style.boxShadow = '0 12px 24px rgba(0,0,0,0.35)';
+      });
+      el.addEventListener('mouseleave', () => {
+        el.style.transform = `rotate(${angle}deg)`;
+        el.style.zIndex = String(i);
+        el.style.boxShadow = '';
+      });
       el.addEventListener('click', () => handleCardClick(card, state));
     } else {
       el.style.opacity = '0.6';
@@ -275,9 +349,17 @@ function handleCardClick(card, state) {
   if (isTrumpKQ) {
     const hasK = state.sheniKartebi.some(c => c.cveti === state.koziriCveti && c.ranki === 'KAROLI');
     const hasQ = state.sheniKartebi.some(c => c.cveti === state.koziriCveti && c.ranki === 'DAMA');
+
     if (hasK && hasQ) {
+      // First card of the K-Q pair — offer Belote or skip
       pendingBeloteCard = card;
-      renderBeloteActions(card);
+      renderBeloteActions(card, false);
+      return;
+    }
+    if (beloteDeclared) {
+      // Previously declared Belote; this is the second card — offer Rebelote or skip
+      pendingBeloteCard = card;
+      renderBeloteActions(card, true);
       return;
     }
   }
@@ -285,13 +367,21 @@ function handleCardClick(card, state) {
   doPlayCard(card, 'ARAA_NACXADEBI');
 }
 
-function renderBeloteActions(card) {
+function renderBeloteActions(card, isSecond) {
+  const options = isSecond
+    ? [['Rebelote', 'REBELOTIA_NACXADEBI'], ['No announcement', 'ARAA_NACXADEBI']]
+    : [['Belote',   'BELOTIA_NACXADEBI'],   ['No announcement', 'ARAA_NACXADEBI']];
+
   actionsDiv.innerHTML = '';
-  [['Belote', 'BELOTIA_NACXADEBI'], ['Rebelote', 'REBELOTIA_NACXADEBI'], ['No announcement', 'ARAA_NACXADEBI']].forEach(([label, val]) => {
+  options.forEach(([label, val]) => {
     const btn = document.createElement('button');
     btn.textContent = label;
     btn.style.cssText = 'background:rgba(255,255,255,0.9); color:#333; margin:0.2rem;';
-    btn.addEventListener('click', () => { pendingBeloteCard = null; doPlayCard(card, val); });
+    btn.addEventListener('click', () => {
+      pendingBeloteCard = null;
+      if (val === 'BELOTIA_NACXADEBI') beloteDeclared = true;
+      doPlayCard(card, val);
+    });
     actionsDiv.appendChild(btn);
   });
 }
@@ -309,11 +399,13 @@ async function doPlayCard(card, belote) {
 
 // ─── QULEBIS_DATVLA ─────────────────────────────────────────────────────────
 
-function renderRoundEnd(state) {
+function renderRoundEnd(state, deltaA = 0, deltaB = 0) {
   roundEndOverlay.style.display = 'flex';
+  const delta = n => n > 0 ? `<span style="color:#4caf50; margin-left:0.4rem;">+${n}</span>`
+                   : n < 0 ? `<span style="color:#f44336; margin-left:0.4rem;">${n}</span>` : '';
   roundEndContent.innerHTML = `
-    <p style="margin:0.5rem 0;">Team A: <strong>${state.qula.gundiAQula}</strong></p>
-    <p style="margin:0.5rem 0;">Team B: <strong>${state.qula.gundiBQula}</strong></p>
+    <p style="margin:0.5rem 0;">Team A: <strong>${state.qula.gundiAQula}</strong>${delta(deltaA)}</p>
+    <p style="margin:0.5rem 0;">Team B: <strong>${state.qula.gundiBQula}</strong>${delta(deltaB)}</p>
     ${state.qula.gayinuliQula > 0 ? `<p style="margin:0.5rem 0; color:#f57c00;">Frozen: ${state.qula.gayinuliQula}</p>` : ''}
     <p style="margin-top:1rem; color:#777; font-size:0.85rem;">Next round starting...</p>
   `;
@@ -339,6 +431,7 @@ const stopPolling = startPolling(async () => {
 
     renderTopBar(state);
     renderPlayers(state);
+    renderTableInfo(state);
 
     if (state.gamarjvebuliGundi) {
       stopPolling();
@@ -354,7 +447,10 @@ const stopPolling = startPolling(async () => {
 
     // Detect round end: faza just left KRUGEBI
     if (prevFaza === 'KRUGEBI' && state.faza !== 'KRUGEBI') {
-      renderRoundEnd(state);
+      const deltaA = state.qula.gundiAQula - prevScores.a;
+      const deltaB = state.qula.gundiBQula - prevScores.b;
+      prevScores = { a: state.qula.gundiAQula, b: state.qula.gundiBQula };
+      renderRoundEnd(state, deltaA, deltaB);
       roundEndUntil = Date.now() + 3000;
     }
     prevFaza = state.faza;
@@ -363,6 +459,7 @@ const stopPolling = startPolling(async () => {
     if (Date.now() < roundEndUntil) return;
 
     if (state.faza !== 'KOMBINACIIS_DEKLARACIA') comboReady = false;
+    if (state.faza !== 'KRUGEBI') { prevTrickCards = []; lastTrick = null; }
 
     switch (state.faza) {
       case 'KARTIS_DARIGEBA':        renderDealing();           break;

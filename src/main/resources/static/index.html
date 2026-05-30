@@ -7,18 +7,21 @@
   <link rel="stylesheet" href="css/style.css">
   <script type="module" src="js/entry.js"></script>
 </head>
-<body>
-  <div class="card" style="max-width: 400px;">
-    <h1 style="text-align: center; margin-bottom: 2rem;">Belote</h1>
+<body class="lobby-body">
+  <div class="card" style="max-width:400px; width:100%;">
+    <h1 style="text-align:center; margin-bottom:0.4rem; font-size:2rem; letter-spacing:-0.5px;">
+      <span style="color:#d32f2f;">♥</span> Belote <span style="color:#212121;">♠</span>
+    </h1>
+    <p id="subtitle" style="text-align:center; color:#777; font-size:0.85rem; margin-bottom:1.5rem;">Create a new game</p>
 
     <input id="nickname" type="text" placeholder="Your nickname">
 
-    <div id="teamSelector" style="display: flex; gap: 1rem; margin: 2rem 0;">
-      <button id="teamA" style="flex: 1; background: #1976d2; color: white;">Team A</button>
-      <button id="teamB" style="flex: 1; background: #388e3c; color: white;">Team B</button>
+    <div id="teamSelector" style="display:flex; gap:1rem; margin:0 0 1.25rem;">
+      <button id="teamA" class="team-btn" style="flex:1; background:#1976d2; color:white;">Team A</button>
+      <button id="teamB" class="team-btn" style="flex:1; background:#388e3c; color:white;">Team B</button>
     </div>
 
-    <button id="play" style="width: 100%; background: #f57c00; color: white; padding: 1rem; font-weight: bold;">Play</button>
+    <button id="play" style="width:100%; background:#f57c00; color:white; padding:1rem; font-weight:bold;">Play</button>
 
     <div id="error" class="error"></div>
   </div>

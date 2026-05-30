@@ -7,25 +7,25 @@
   <link rel="stylesheet" href="css/style.css">
   <script type="module" src="js/waiting.js"></script>
 </head>
-<body>
-  <div class="card" style="max-width: 480px; width: 100%;">
-    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem;">
-      <span id="roomLink" style="flex: 1; font-size: 0.85rem; color: #555; word-break: break-all;"></span>
-      <button id="copyBtn" style="background: #eee; color: #333; padding: 0.4rem 0.8rem; font-size: 0.8rem;">Copy</button>
+<body class="lobby-body">
+  <div class="card" style="max-width:480px; width:100%;">
+    <div class="room-link-box">
+      <span id="roomLink" class="room-link-text"></span>
+      <button id="copyBtn" style="background:#eee; color:#333; padding:0.4rem 0.8rem; font-size:0.8rem; white-space:nowrap;">Copy link</button>
     </div>
 
-    <div style="display: flex; gap: 1rem;">
-      <div style="flex: 1;">
-        <h3 style="color: #1976d2; margin-bottom: 1rem;">Team A</h3>
+    <div style="display:flex; gap:1rem;">
+      <div style="flex:1;">
+        <h3 style="color:#1976d2; margin-bottom:0.75rem; font-size:0.95rem;">Team A</h3>
         <div id="teamA"></div>
       </div>
-      <div style="flex: 1;">
-        <h3 style="color: #388e3c; margin-bottom: 1rem;">Team B</h3>
+      <div style="flex:1;">
+        <h3 style="color:#388e3c; margin-bottom:0.75rem; font-size:0.95rem;">Team B</h3>
         <div id="teamB"></div>
       </div>
     </div>
 
-    <p id="status" style="margin-top: 1.5rem; color: #777; text-align: center; font-size: 0.9rem;"></p>
+    <p id="status" style="margin-top:1.5rem; color:#777; text-align:center; font-size:0.9rem;"></p>
   </div>
 </body>
 </html>

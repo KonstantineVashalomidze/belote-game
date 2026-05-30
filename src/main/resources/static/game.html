@@ -21,7 +21,10 @@
     <div></div>
 
     <div id="pLeft" class="player-slot" ></div>
-    <div id="trickArea" style="display:flex; flex-wrap:wrap; gap:0.4rem; justify-content:center; align-items:center; min-height:70px;"></div>
+    <div style="display:flex; flex-direction:column; align-items:center; gap:0.35rem; width:100%;">
+      <div id="tableInfo" class="table-info" style="display:none;"></div>
+      <div id="trickArea" style="display:flex; flex-wrap:wrap; gap:0.4rem; justify-content:center; align-items:center; min-height:60px; width:100%;"></div>
+    </div>
     <div id="pRight" class="player-slot" ></div>
 
     <div></div>
@@ -36,7 +39,7 @@
   <!-- Combo declaration overlay -->
   <div id="comboOverlay" class="overlay" style="display:none;">
     <div class="overlay-card">
-      <h3 style="margin-bottom:1rem;">Declare Combos</h3>
+      <h3 id="comboHeader" style="margin-bottom:1rem;">Declare Combos</h3>
       <div id="comboHand" style="display:flex; flex-wrap:wrap; gap:0.3rem; margin-bottom:1rem;"></div>
       <div id="comboButtons" style="display:none; margin-bottom:0.5rem;"></div>
       <div id="comboList" style="margin-bottom:1rem;"></div>
