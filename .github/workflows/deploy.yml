@@ -30,6 +30,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/los-dogos-studio/belote-game:latest
+          tags: ghcr.io/konstantinevashalomidze/belote-game:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
